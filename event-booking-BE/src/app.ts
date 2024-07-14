@@ -66,5 +66,5 @@ app.all(
 );
 
 app.listen(port, () => {
-	console.log(`Server is is running at http://localhost:${port}`);
+	console.log(`Server is now running at http://localhost:${port}`);
 });
