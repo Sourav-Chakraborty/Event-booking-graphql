@@ -5,13 +5,11 @@ import bodyParser from "body-parser";
 import { createHandler } from "graphql-http/lib/use/express";
 import { buildSchema } from "graphql";
 import type { Event as EventType, CreateEventType } from "./Utils/customTypes";
-import {Event} from "./Models";
-import connectToDB from './Utils/connectToDB'
-
+import { Event } from "./Models";
+import connectToDB from "./Utils/connectToDB";
 
 const app: Express = express();
 const port = process.env.PORT || 3000;
-const events: EventType[] = [];
 
 app.use(bodyParser.json());
 app.all(
@@ -48,11 +46,13 @@ app.all(
 			
 		`),
 		rootValue: {
-			events: (): EventType[] => events,
-			createEvent:async (args: CreateEventType): Promise<{title:string,description:string,price:number}> => {
+			events: async (): Promise<EventType[]> => {
+				return Event.find();
+			},
+			createEvent: async (args: CreateEventType): Promise<EventType> => {
 				const { title, description, price } = args.eventInput;
 
-				const event =await Event.create({
+				const event = await Event.create({
 					title,
 					description,
 					price,
@@ -66,5 +66,5 @@ app.all(
 
 app.listen(port, () => {
 	console.log(`Server is now running at http://localhost:${port}`);
-	connectToDB()
+	connectToDB();
 });

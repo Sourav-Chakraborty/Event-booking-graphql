@@ -1,8 +1,7 @@
 export type Event = {
-	// _id: string;
 	title: string;
 	description: string;
-	price: string;
+	price: number;
 };
 
-export type CreateEventType = { eventInput: Omit<Event, "_id" | "date"> };
+export type CreateEventType = { eventInput: Event };
