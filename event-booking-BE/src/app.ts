@@ -1,15 +1,17 @@
-import express, { Express, Request, Response } from "express";
+import express, { Express } from "express";
 import dotenv from "dotenv";
+dotenv.config();
 import bodyParser from "body-parser";
 import { createHandler } from "graphql-http/lib/use/express";
 import { buildSchema } from "graphql";
-import type { Event, CreateEventType } from "./Utils/customTypes";
+import type { Event as EventType, CreateEventType } from "./Utils/customTypes";
+import {Event} from "./Models";
+import connectToDB from './Utils/connectToDB'
 
-dotenv.config();
 
 const app: Express = express();
 const port = process.env.PORT || 3000;
-const events: Event[] = [];
+const events: EventType[] = [];
 
 app.use(bodyParser.json());
 app.all(
@@ -46,19 +48,16 @@ app.all(
 			
 		`),
 		rootValue: {
-			events: (): Event[] => events,
-			createEvent: (args: CreateEventType): Event => {
+			events: (): EventType[] => events,
+			createEvent:async (args: CreateEventType): Promise<{title:string,description:string,price:number}> => {
 				const { title, description, price } = args.eventInput;
 
-				const event = {
-					_id: Math.random().toString(),
+				const event =await Event.create({
 					title,
 					description,
 					price,
-					date: new Date().toISOString(),
-				};
+				});
 
-				events.push(event);
 				return event;
 			},
 		},
@@ -67,4 +66,5 @@ app.all(
 
 app.listen(port, () => {
 	console.log(`Server is now running at http://localhost:${port}`);
+	connectToDB()
 });
