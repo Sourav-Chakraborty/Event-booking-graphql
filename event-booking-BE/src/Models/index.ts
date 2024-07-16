@@ -1,6 +1,4 @@
-import {Event,eventSchema} from './event.model'
+import Event from "./event.model";
+import User from "./user.model";
 
-export {
-    Event,
-    eventSchema
-}
+export { Event, User };
